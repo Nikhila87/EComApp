@@ -75,9 +75,9 @@ public async Task<ActionResult<Product>> CreateProduct(Product product, [FromHea
 
         try
         {
-            List<string> savedImages = new List<string>(); // ✅ List to store multiple images
+            List<string> savedImages = new List<string>(); 
 
-            foreach (var image in product.ImageUrl.Split(',')) // ✅ Split comma-separated images
+            foreach (var image in product.ImageUrl.Split(',')) 
             {
 
 

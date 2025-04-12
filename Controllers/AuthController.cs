@@ -27,8 +27,7 @@ public class AuthController : ControllerBase
     {
         try
         {
-            Console.WriteLine("🔥 Debugging: New changes are working! 🔥");
-        // Check if the user already exists
+      
         var existingUser = await _userManager.FindByNameAsync(model.UserName);
         if (existingUser != null)
         {
