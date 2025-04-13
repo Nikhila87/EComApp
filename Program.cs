@@ -17,7 +17,7 @@ builder.Logging.ClearProviders();
 
 
 
-var MyAllowSpecificOrigins = "_myAllowSpecificOrigins";
+var MyAllowSpecificOrigins = "_myAllowSpecificOrigins"; //CORS Policy
 builder.WebHost.UseUrls("http://*:5000", "https://*:5001");
 builder.Services.AddCors(options =>
 {
