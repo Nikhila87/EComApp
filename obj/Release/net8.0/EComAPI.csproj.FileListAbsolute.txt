@@ -185,3 +185,4 @@ C:\.NET Projects\EComAPI\EComAPI\obj\Release\net8.0\EComAPI.genruntimeconfig.cac
 C:\.NET Projects\EComAPI\EComAPI\obj\Release\net8.0\ref\EComAPI.dll
 C:\.NET Projects\EComAPI\EComAPI\bin\Release\net8.0\appsettings.Production.json
 C:\.NET Projects\EComAPI\EComAPI\bin\Release\net8.0\appsettings.Development.json
+C:\.NET Projects\EComAPI\EComAPI\obj\Release\net8.0\EComAPI.sourcelink.json

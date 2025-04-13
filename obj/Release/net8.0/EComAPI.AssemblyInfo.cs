@@ -15,7 +15,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("EComAPI")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Release")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+7be6fb2ea95792be17e86b52606f1d7c2b3fc0e6")]
 [assembly: System.Reflection.AssemblyProductAttribute("EComAPI")]
 [assembly: System.Reflection.AssemblyTitleAttribute("EComAPI")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

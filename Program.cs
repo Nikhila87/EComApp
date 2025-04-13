@@ -17,14 +17,15 @@ builder.Logging.ClearProviders();
 
 
 
-var MyAllowSpecificOrigins = "_myAllowSpecificOrigins"; //CORS Policy
+var MyAllowSpecificOrigins = "_myAllowSpecificOrigins";
 builder.WebHost.UseUrls("http://*:5000", "https://*:5001");
 builder.Services.AddCors(options =>
 {
     options.AddPolicy(name: MyAllowSpecificOrigins,
         policy =>
         {
-            policy.WithOrigins("http://localhost:4200") // Allow Angular frontend
+            //policy.WithOrigins("http://localhost:4200")
+            policy.WithOrigins("https://ecom-api-test-e5g9ccfwfjdufyh8.southeastasia-01.azurewebsites.net")// Allow Angular frontend
                   .AllowAnyMethod()
                   .AllowAnyHeader()
             .AllowCredentials();
