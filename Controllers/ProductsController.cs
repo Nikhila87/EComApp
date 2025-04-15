@@ -6,6 +6,8 @@ using Microsoft.AspNetCore.Authorization;
 using System.Security.Claims;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using System.IO;
+using Azure.Storage.Blobs.Models;
+using Azure.Storage.Blobs;
 
 [Route("api/[controller]")]
 [ApiController]
@@ -75,38 +77,43 @@ public async Task<ActionResult<Product>> CreateProduct(Product product, [FromHea
 
         try
         {
-            List<string> savedImages = new List<string>(); // ✅ List to store multiple images
+            // Add at the top of your file
+           
 
-            foreach (var image in product.ImageUrl.Split(',')) // ✅ Split comma-separated images
+            // Replace this with your actual connection string
+            string connectionString = "DefaultEndpointsProtocol=https;AccountName=ecom2025;AccountKey=wKD1/c23NPoCVrDNI+77WLNBv0dFA+46aQZfQK2cze4vfa58iJHy4aGfdzEEODSFerdfQP5Ya/ia+AStrcG4Dw==;EndpointSuffix=core.windows.net";
+            string containerName = "ecom2025"; // e.g., "productimages"
+
+            List<string> savedImageUrls = new List<string>();
+
+            foreach (var image in product.ImageUrl.Split(','))
             {
-
-
-                string sourcePath = Path.Combine(Directory.GetCurrentDirectory(), "assets", image);
-                string destinationFolder = Path.Combine(Directory.GetCurrentDirectory(), "images");
-                string destinationPath = Path.Combine(destinationFolder, Path.GetFileName(sourcePath));
-
-                if (!System.IO.File.Exists(sourcePath))
+                string localPath = Path.Combine(Directory.GetCurrentDirectory(), "assets", image);
+                if (!System.IO.File.Exists(localPath))
                 {
-                    return BadRequest($"Source file not found: {sourcePath}");
+                    return BadRequest($"File not found: {localPath}");
                 }
 
-                if (!Directory.Exists(destinationFolder))
+                BlobContainerClient containerClient = new BlobContainerClient(connectionString, containerName);
+                await containerClient.CreateIfNotExistsAsync(PublicAccessType.Blob);
+
+                string blobName = Path.GetFileName(localPath); 
+                BlobClient blobClient = containerClient.GetBlobClient(blobName);
+
+                using (FileStream fileStream = System.IO.File.OpenRead(localPath))
                 {
-                    Directory.CreateDirectory(destinationFolder);  //Access Denied here
+                    await blobClient.UploadAsync(fileStream, overwrite: true);
                 }
 
-                System.IO.File.Copy(sourcePath, destinationPath, true);
-                savedImages.Add("assets/"+Path.GetFileName(sourcePath));
-
+                savedImageUrls.Add(blobClient.Uri.ToString());
             }
 
-            //Save multiple images as a comma-separated string
-            product.ImageUrl = string.Join(",", savedImages);
-
+            product.ImageUrl = string.Join(",", savedImageUrls);
             _context.Products.Add(product);
             await _context.SaveChangesAsync();
 
             return CreatedAtAction(nameof(GetProducts), new { id = product.Id }, product);
+
         }
         catch (Exception ex)
         {
