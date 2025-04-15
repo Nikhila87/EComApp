@@ -93,24 +93,25 @@ public async Task<ActionResult<Product>> CreateProduct(Product product, [FromHea
 
             foreach (var image in product.ImageUrl.Split(','))
             {
-                string localPath = Path.Combine(Directory.GetCurrentDirectory(), "assets", image);
-                if (!System.IO.File.Exists(localPath))
-                {
-                    return BadRequest($"File not found: {localPath}");
-                }
+                // You will receive the uploaded file here, instead of dealing with local paths
+                // Assuming 'image' is the name of the uploaded file from the form (not the local file path)
+                var fileStream = new MemoryStream(Convert.FromBase64String(image));  // If you're sending base64 string in your API
 
+                // Create a BlobContainerClient for interacting with the blob container
                 BlobContainerClient containerClient = new BlobContainerClient(connectionString, containerName);
                 await containerClient.CreateIfNotExistsAsync(PublicAccessType.Blob);
 
-                string blobName = Path.GetFileName(localPath); 
+                string blobName = Path.GetFileName(image); // Use the file name from the request
                 BlobClient blobClient = containerClient.GetBlobClient(blobName);
 
-                using (FileStream fileStream = System.IO.File.OpenRead(localPath))
-                {
-                    await blobClient.UploadAsync(fileStream, overwrite: true);
-                }
+                // Upload the image to the Blob Storage
+                await blobClient.UploadAsync(fileStream, overwrite: true);
 
-                savedImageUrls.Add(blobClient.Uri.ToString());
+                // Generate the URL of the uploaded image in Blob Storage
+                string blobUrl = blobClient.Uri.ToString();
+
+                // Add the image URL to the list
+                savedImageUrls.Add(blobUrl);
             }
 
             product.ImageUrl = string.Join(",", savedImageUrls);
@@ -178,6 +179,20 @@ public async Task<ActionResult<Product>> CreateProduct(Product product, [FromHea
         var imageUrl = $"{Request.Scheme}://{Request.Host}/uploads/{fileName}";
         return Ok(new { imageUrl });
     }
+    public async Task<string> UploadToBlobAsync(IFormFile file)
+    {
+        var connectionString = _configuration["AzureBlobStorage:ConnectionString"];
+        var containerName = _configuration["AzureBlobStorage:ContainerName"];
 
+        BlobServiceClient blobServiceClient = new BlobServiceClient(connectionString);
+        BlobContainerClient containerClient = blobServiceClient.GetBlobContainerClient(containerName);
+        await containerClient.CreateIfNotExistsAsync();
+        await containerClient.SetAccessPolicyAsync(Azure.Storage.Blobs.Models.PublicAccessType.Blob); // optional for read
+
+        var blobClient = containerClient.GetBlobClient(file.FileName);
+        await blobClient.UploadAsync(file.OpenReadStream(), overwrite: true);
+
+        return blobClient.Uri.ToString();
+    }
 
 }
