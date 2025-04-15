@@ -8,22 +8,27 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using System.IO;
 using Azure.Storage.Blobs.Models;
 using Azure.Storage.Blobs;
+using Microsoft.Extensions.Configuration;
 
 [Route("api/[controller]")]
 [ApiController]
 public class ProductsController : ControllerBase
 {
     private readonly AppDbContext _context;
+    private readonly IConfiguration _configuration;
 
-    public ProductsController(AppDbContext context)
+  
+
+    public ProductsController(AppDbContext context, IConfiguration configuration)
     {
         _context = context;
+        _configuration = configuration;
         //List<int> a = new List<int>();
         //a.Add(1);
         //int b = Convert.ToInt16(a);
         //string s = "baby moon";
-  
-        
+
+
 
     }
   
@@ -81,8 +86,8 @@ public async Task<ActionResult<Product>> CreateProduct(Product product, [FromHea
            
 
             // Replace this with your actual connection string
-            string connectionString = "DefaultEndpointsProtocol=https;AccountName=ecom2025;AccountKey=wKD1/c23NPoCVrDNI+77WLNBv0dFA+46aQZfQK2cze4vfa58iJHy4aGfdzEEODSFerdfQP5Ya/ia+AStrcG4Dw==;EndpointSuffix=core.windows.net";
-            string containerName = "ecom2025"; // e.g., "productimages"
+    var connectionString = _configuration["AzureBlobStorage:ConnectionString"];
+           var containerName = _configuration["AzureBlobStorage:ContainerName"]; ; // e.g., "productimages"
 
             List<string> savedImageUrls = new List<string>();
 
