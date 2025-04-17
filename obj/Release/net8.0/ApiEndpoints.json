@@ -86,16 +86,6 @@
   },
   {
     "ContainingType": "EComAPI.Controllers.CartController",
-    "Method": "Ping",
-    "RelativePath": "api/Cart/ping",
-    "HttpMethod": "GET",
-    "IsController": true,
-    "Order": 0,
-    "Parameters": [],
-    "ReturnTypes": []
-  },
-  {
-    "ContainingType": "EComAPI.Controllers.CartController",
     "Method": "GetCartItemsForUser",
     "RelativePath": "api/Cart/user",
     "HttpMethod": "GET",

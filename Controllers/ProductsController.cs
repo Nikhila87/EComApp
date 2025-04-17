@@ -79,15 +79,11 @@ public class ProductsController : ControllerBase
 public async Task<ActionResult<Product>> CreateProduct(Product product, [FromHeader(Name = "Authorization")] string? authHeader = null)
     {
 
-
         try
         {
-            // Add at the top of your file
-           
-
-            // Replace this with your actual connection string
-    var connectionString = _configuration["AzureBlobStorage:ConnectionString"];
-           var containerName = _configuration["AzureBlobStorage:ContainerName"]; ; // e.g., "productimages"
+            // Replace this with your actual connection string and container name
+            var connectionString = _configuration["AzureBlob:ConnectionString"];
+            var containerName = _configuration["AzureBlob:ContainerName"];  // e.g., "productimages"
 
             List<string> savedImageUrls = new List<string>();
 
@@ -95,9 +91,14 @@ public async Task<ActionResult<Product>> CreateProduct(Product product, [FromHea
             {
                 // You will receive the uploaded file here, instead of dealing with local paths
                 // Assuming 'image' is the name of the uploaded file from the form (not the local file path)
-                var fileStream = new MemoryStream(Convert.FromBase64String(image));  // If you're sending base64 string in your API
-
+                //var fileStream = new MemoryStream(Convert.FromBase64String(image));  // If you're sending base64 string in your API
+                string localPath = Path.Combine(Directory.GetCurrentDirectory(), "assets", image);
                 // Create a BlobContainerClient for interacting with the blob container
+                if (!System.IO.File.Exists(localPath))
+                {
+                    return BadRequest($"File not found: {localPath}");
+                }
+                using var fileStream = System.IO.File.OpenRead(localPath);
                 BlobContainerClient containerClient = new BlobContainerClient(connectionString, containerName);
                 await containerClient.CreateIfNotExistsAsync(PublicAccessType.Blob);
 
@@ -105,8 +106,14 @@ public async Task<ActionResult<Product>> CreateProduct(Product product, [FromHea
                 BlobClient blobClient = containerClient.GetBlobClient(blobName);
 
                 // Upload the image to the Blob Storage
-                await blobClient.UploadAsync(fileStream, overwrite: true);
-
+                //await blobClient.UploadAsync(fileStream, overwrite: true);
+                await blobClient.UploadAsync(fileStream, new BlobUploadOptions
+                {
+                    HttpHeaders = new BlobHttpHeaders
+                    {
+                        ContentType = "image/jpeg"
+                    }
+                });
                 // Generate the URL of the uploaded image in Blob Storage
                 string blobUrl = blobClient.Uri.ToString();
 
@@ -114,17 +121,20 @@ public async Task<ActionResult<Product>> CreateProduct(Product product, [FromHea
                 savedImageUrls.Add(blobUrl);
             }
 
+            // Save the full image URLs as a comma-separated string in the product record
             product.ImageUrl = string.Join(",", savedImageUrls);
+
+            // Add the product to the database and save the changes
             _context.Products.Add(product);
             await _context.SaveChangesAsync();
 
             return CreatedAtAction(nameof(GetProducts), new { id = product.Id }, product);
-
         }
         catch (Exception ex)
         {
-            return StatusCode(500, $"Internal Server Error: {ex.Message} {ex.StackTrace}");
+            return BadRequest($"An error occurred: {ex.Message}");
         }
+
 
     }
     [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "Admin")]
@@ -179,20 +189,6 @@ public async Task<ActionResult<Product>> CreateProduct(Product product, [FromHea
         var imageUrl = $"{Request.Scheme}://{Request.Host}/uploads/{fileName}";
         return Ok(new { imageUrl });
     }
-    public async Task<string> UploadToBlobAsync(IFormFile file)
-    {
-        var connectionString = _configuration["AzureBlobStorage:ConnectionString"];
-        var containerName = _configuration["AzureBlobStorage:ContainerName"];
 
-        BlobServiceClient blobServiceClient = new BlobServiceClient(connectionString);
-        BlobContainerClient containerClient = blobServiceClient.GetBlobContainerClient(containerName);
-        await containerClient.CreateIfNotExistsAsync();
-        await containerClient.SetAccessPolicyAsync(Azure.Storage.Blobs.Models.PublicAccessType.Blob); // optional for read
-
-        var blobClient = containerClient.GetBlobClient(file.FileName);
-        await blobClient.UploadAsync(file.OpenReadStream(), overwrite: true);
-
-        return blobClient.Uri.ToString();
-    }
 
 }

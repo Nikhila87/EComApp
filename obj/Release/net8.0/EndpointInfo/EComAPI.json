@@ -67,18 +67,6 @@
         }
       }
     },
-    "/api/Cart/ping": {
-      "get": {
-        "tags": [
-          "Cart"
-        ],
-        "responses": {
-          "200": {
-            "description": "OK"
-          }
-        }
-      }
-    },
     "/api/Cart": {
       "post": {
         "tags": [
