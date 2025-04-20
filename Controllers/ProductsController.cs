@@ -58,6 +58,16 @@ public class ProductsController : ControllerBase
     {
         return await _context.Products.ToListAsync();
     }
+    [HttpGet("search")]
+    public async Task<IActionResult> SearchProducts([FromQuery] string name)
+    {
+        var products = await _context.Products
+            .Where(p => p.IsDeleted == false && p.Name.Contains(name))
+            .ToListAsync();
+
+        return Ok(products);
+    }
+
     [HttpGet("{id}")]
     public async Task<IActionResult> GetProductById(int id)
     {
@@ -89,11 +99,9 @@ public async Task<ActionResult<Product>> CreateProduct(Product product, [FromHea
 
             foreach (var image in product.ImageUrl.Split(','))
             {
-                // You will receive the uploaded file here, instead of dealing with local paths
-                // Assuming 'image' is the name of the uploaded file from the form (not the local file path)
-                //var fileStream = new MemoryStream(Convert.FromBase64String(image));  // If you're sending base64 string in your API
+                
                 string localPath = Path.Combine(Directory.GetCurrentDirectory(), "assets", image);
-                // Create a BlobContainerClient for interacting with the blob container
+                
                 if (!System.IO.File.Exists(localPath))
                 {
                     return BadRequest($"File not found: {localPath}");

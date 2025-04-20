@@ -216,6 +216,22 @@
   },
   {
     "ContainingType": "ProductsController",
+    "Method": "SearchProducts",
+    "RelativePath": "api/Products/search",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "name",
+        "Type": "System.String",
+        "IsRequired": false
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "ProductsController",
     "Method": "UploadImage",
     "RelativePath": "api/Products/upload",
     "HttpMethod": "POST",
