@@ -7,6 +7,8 @@ using System.Text;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.OpenApi.Models;
 using System.IdentityModel.Tokens.Jwt;
+using EComAPI.NewFolder;
+using Stripe;
 var builder = WebApplication.CreateBuilder(args);
 builder.Configuration.AddUserSecrets<Program>();
 byte[] key = Encoding.UTF8.GetBytes(builder.Configuration["JwtSettings:Key"]);
@@ -31,6 +33,9 @@ builder.Services.AddCors(options =>
             .AllowCredentials();
         });
 });
+builder.Services.Configure<StripeSettings>(builder.Configuration.GetSection("Stripe"));
+StripeConfiguration.ApiKey = builder.Configuration["Stripe:SecretKey"];
+
 builder.Services.AddIdentity<User, IdentityRole>()
        .AddEntityFrameworkStores<AppDbContext>()
        .AddDefaultTokenProviders();
@@ -113,7 +118,8 @@ builder.Services.AddAuthorization(options =>
     options.AddPolicy("RequireAdministratorRole", policy => policy.RequireRole("Administrator"));
 });
 builder.Services.AddControllers();
-
+builder.Services.Configure<SendGridSettings>(builder.Configuration.GetSection("SendGridSettings"));
+builder.Services.AddScoped<IEmailService, SendGridEmailService>();
 var app = builder.Build();
 //app.Use(async (context, next) =>
 //{

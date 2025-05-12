@@ -2,6 +2,7 @@
 using EComAPI.Models;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System.Security.Claims;
@@ -13,10 +14,11 @@ namespace EComAPI.Controllers
     public class CartController : ControllerBase
     {
         private readonly AppDbContext _context;
-
-        public CartController(AppDbContext context)
+        private readonly UserManager<User> _userManager;
+        public CartController(AppDbContext context,UserManager<User> userManager)
         {
             _context = context;
+            _userManager=userManager;
         }
       
         // Add item to cart
@@ -91,10 +93,11 @@ namespace EComAPI.Controllers
         [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
         public async Task<IActionResult> UpdateCartItemQuantity(int id, [FromBody] int quantity)
         {
+
             var userId = User.FindFirstValue(ClaimTypes.Name);
 
             var item = await _context.CartItems
-                .FirstOrDefaultAsync(ci => ci.Id == id && ci.UserId == userId);
+                .FirstOrDefaultAsync(ci => ci.ProductId == id && ci.UserId == userId);
 
             if (item == null)
                 return NotFound("Item not found");
@@ -104,5 +107,24 @@ namespace EComAPI.Controllers
 
             return Ok("Quantity updated");
         }
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+        [HttpDelete("clear")]
+        public async Task<IActionResult> ClearCart()
+        {
+            var userId = User.FindFirstValue(ClaimTypes.Name);
+            var cart = await _context.CartItems
+                .Where(c => c.UserId == userId).ToListAsync();
+
+
+
+            if (cart != null)
+            {
+                _context.CartItems.RemoveRange(cart);
+                await _context.SaveChangesAsync();
+            }
+
+            return Ok();
+        }
+
     }
 }
