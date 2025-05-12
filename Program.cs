@@ -34,21 +34,9 @@ builder.Services.AddCors(options =>
         });
 });
 builder.Services.Configure<StripeSettings>(builder.Configuration.GetSection("Stripe"));
-//StripeConfiguration.ApiKey = builder.Configuration["Stripe:SecretKey"];
-
-//var stripeKey = builder.Configuration["Stripe:SecretKey"];
 
 StripeConfiguration.ApiKey = builder.Configuration["Stripe:SecretKey"];
 
-
-var stripeKey = builder.Configuration["Stripe:SecretKey"];
-
-
-StripeConfiguration.ApiKey = builder.Configuration["Stripe:SecretKey"];
-
-
-
-ge)
 builder.Services.AddIdentity<User, IdentityRole>()
        .AddEntityFrameworkStores<AppDbContext>()
        .AddDefaultTokenProviders();
@@ -132,16 +120,10 @@ builder.Services.AddAuthorization(options =>
 });
 builder.Services.AddControllers();
 
+
 var sendGridKey = builder.Configuration["SendGrid:ApiKey"];
 
-<<<<<<< HEAD
-<<<<<<< HEAD
-=======
 
-
->>>>>>> 2dbe4fb (Merge remote and local history)
-=======
->>>>>>> 0b4c3f5 (Your commit message)
 builder.Services.Configure<SendGridSettings>(builder.Configuration.GetSection("SendGridSettings"));
 builder.Services.AddScoped<IEmailService, SendGridEmailService>();
 var app = builder.Build();
