@@ -118,6 +118,7 @@ builder.Services.AddAuthorization(options =>
     options.AddPolicy("RequireAdministratorRole", policy => policy.RequireRole("Administrator"));
 });
 builder.Services.AddControllers();
+var sendGridKey = builder.Configuration["SendGrid:ApiKey"];
 builder.Services.Configure<SendGridSettings>(builder.Configuration.GetSection("SendGridSettings"));
 builder.Services.AddScoped<IEmailService, SendGridEmailService>();
 var app = builder.Build();
