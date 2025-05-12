@@ -34,8 +34,12 @@ builder.Services.AddCors(options =>
         });
 });
 builder.Services.Configure<StripeSettings>(builder.Configuration.GetSection("Stripe"));
+
 //StripeConfiguration.ApiKey = builder.Configuration["Stripe:SecretKey"];
-var stripeKey = builder.Configuration["Stripe:SecretKey"];
+//var stripeKey = builder.Configuration["Stripe:SecretKey"];
+
+StripeConfiguration.ApiKey = builder.Configuration["Stripe:SecretKey"];
+
 builder.Services.AddIdentity<User, IdentityRole>()
        .AddEntityFrameworkStores<AppDbContext>()
        .AddDefaultTokenProviders();
@@ -118,6 +122,7 @@ builder.Services.AddAuthorization(options =>
     options.AddPolicy("RequireAdministratorRole", policy => policy.RequireRole("Administrator"));
 });
 builder.Services.AddControllers();
+
 
 var sendGridKey = builder.Configuration["SendGrid:ApiKey"];
 
