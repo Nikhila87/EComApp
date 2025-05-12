@@ -1,0 +1,12 @@
+{
+  "Version": 1,
+  "Hash": "afzgGkWCDNrKeCbvu234pkjbLXtBq1ZV0T0rRkWpE2o=",
+  "Source": "EComAPI",
+  "BasePath": "_content/EComAPI",
+  "Mode": "Default",
+  "ManifestType": "Build",
+  "ReferencedProjectsConfiguration": [],
+  "DiscoveryPatterns": [],
+  "Assets": [],
+  "Endpoints": []
+}
