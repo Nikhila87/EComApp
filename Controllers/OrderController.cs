@@ -1,5 +1,8 @@
 ﻿using EComAPI.Data;
 using EComAPI.Models;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System.Security.Claims;
@@ -16,9 +19,10 @@ namespace EComAPI.Controllers
             _context = context;
         }
         [HttpGet("my-orders")]
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
         public async Task<IActionResult> GetMyOrders()
         {
-            var userId = "Tina"; // Replace with JWT extraction in real app
+            var userId = User.FindFirstValue(ClaimTypes.Name); // Replace with JWT extraction in real app
             if (string.IsNullOrEmpty(userId))
                 return Unauthorized();
 

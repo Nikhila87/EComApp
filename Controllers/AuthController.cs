@@ -166,7 +166,7 @@ public class AuthController : ControllerBase
         //var user = await _userManager.Users
         // .Where(u => u.Email.ToLower() == model.Email.ToLower())
         // .FirstOrDefaultAsync();
-        if (user == null) return Ok(); // Don't reveal user existence
+        if (user == null) return Ok(new { message = "Invalid email" }); // Don't reveal user existence
         var frontendUrl = _config["FrontendBaseUrl"];
         var token = await _userManager.GeneratePasswordResetTokenAsync(user);
         var resetLink = $"{frontendUrl}/#/reset-password?token={Uri.EscapeDataString(token)}&email={Uri.EscapeDataString(user.Email)}";
