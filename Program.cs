@@ -121,7 +121,7 @@ builder.Services.AddAuthorization(options =>
 builder.Services.AddControllers();
 
 
-var sendGridKey = builder.Configuration["SendGrid:ApiKey"];
+//var sendGridKey = builder.Configuration["SendGrid:ApiKey"];
 
 
 builder.Services.Configure<SendGridSettings>(builder.Configuration.GetSection("SendGridSettings"));

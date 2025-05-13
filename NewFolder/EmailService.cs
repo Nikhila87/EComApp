@@ -7,15 +7,17 @@ using EComAPI.NewFolder;
 public class SendGridEmailService : IEmailService
 {
     private readonly SendGridSettings _settings;
-
+    private  string _sendGridApiKey;
     public SendGridEmailService(IOptions<SendGridSettings> settings)
     {
         _settings = settings.Value;
+        
     }
 
     public async Task SendEmailAsync(string toEmail, string subject, string message)
     {
-        var client = new SendGridClient(_settings.ApiKey);
+        _sendGridApiKey = Environment.GetEnvironmentVariable("SendGridApiKey");
+        var client = new SendGridClient(_sendGridApiKey);
         var from = new EmailAddress(_settings.FromEmail, _settings.FromName);
         var to = new EmailAddress(toEmail);
         var msg = MailHelper.CreateSingleEmail(from, to, subject, "", message);
