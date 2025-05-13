@@ -180,7 +180,7 @@ public class AuthController : ControllerBase
 
         // TODO: Send resetLink via email
         Console.WriteLine(resetLink); // For now, just log it or send via frontend
-        return Ok("Password reset email sent.");
+        return Ok(new { message = "Reset link sent successfully" });
         //return Ok("Password reset link has been sent."+resetLink);
         //return Ok(new { resetLink });
     }
