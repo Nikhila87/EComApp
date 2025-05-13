@@ -163,12 +163,14 @@ if (app.Environment.IsDevelopment() || app.Environment.IsProduction())
 //Console.WriteLine($"Generated Token in Program.cs-144/03: {tokenString}");
 Console.WriteLine($"JWT Key: {builder.Configuration["JwtSettings:Key"]}");
 Console.WriteLine($"JWT Key in Program.cs: {jwtKey}");
-Console.WriteLine("?? Connection String from config: " + connStr);
+Console.WriteLine("?? Connection String from config: " + connStr)
+    app.UseStaticFiles();
+
 app.UseDeveloperExceptionPage();
 app.UseRouting();
 app.UseAuthentication();
 app.UseAuthorization();
 app.MapControllers();
-app.UseStaticFiles();
+
 app.Run();
 
