@@ -17,6 +17,7 @@ public class SendGridEmailService : IEmailService
     public async Task SendEmailAsync(string toEmail, string subject, string message)
     {
         _sendGridApiKey = Environment.GetEnvironmentVariable("SendGridApiKey");
+        Console.WriteLine("SendGridApiKey from env: " + Environment.GetEnvironmentVariable("SendGridApiKey"));
         var client = new SendGridClient(_sendGridApiKey);
         var from = new EmailAddress(_settings.FromEmail, _settings.FromName);
         var to = new EmailAddress(toEmail);
