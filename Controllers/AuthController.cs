@@ -103,7 +103,7 @@ public class AuthController : ControllerBase
         var isPasswordValid = await _userManager.CheckPasswordAsync(user, model.Password);
         if (!isPasswordValid)
         {
-            return Unauthorized("Invalid username or password.");
+            return Unauthorized(new { message = "Invalid username or password." });
         }
 
         //var user = new User
