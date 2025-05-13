@@ -54,7 +54,7 @@ public class AuthController : ControllerBase
                 var encodedToken = HttpUtility.UrlEncode(token);
 
                 // Generate link
-                var confirmationLink = $"{_config["FrontendBaseUrl"]}/confirm-email?email={user.Email}&token={encodedToken}";
+                var confirmationLink = $"{_config["FrontendBaseUrl"]}/#/confirm-email?email={user.Email}&token={encodedToken}";
 
                 // Send email
                 await _emailService.SendEmailAsync(user.Email, "Confirm your email", $"Click here to confirm: {confirmationLink}");
