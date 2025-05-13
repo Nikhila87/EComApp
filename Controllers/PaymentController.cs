@@ -1,8 +1,11 @@
 ﻿using EComAPI.Data;
 using EComAPI.Models;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Stripe.Checkout;
+using System.Security.Claims;
 
 namespace EComAPI.Controllers
 {
@@ -19,9 +22,10 @@ namespace EComAPI.Controllers
         }
 
         [HttpPost("payment")]
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
         public IActionResult CreateCheckoutSession([FromBody] PaymentRequest request)
         {
-            var userId ="Tina"; // or extract from JWT
+            var userId = User.FindFirstValue(ClaimTypes.Name); // or extract from JWT
             var totalAmount = request.TotalAmount;
             var shippingAddress = request.ShippingAddress;
             var options = new SessionCreateOptions
@@ -44,8 +48,8 @@ namespace EComAPI.Controllers
                 }
             },
                 Mode = "payment",
-                SuccessUrl = "http://localhost:4200/payment-success?session_id={CHECKOUT_SESSION_ID}",
-                CancelUrl = "http://localhost:4200/payment-cancel"
+                SuccessUrl = "https://ecomapp-cphjc3bwczfra6fu.southeastasia-01.azurewebsites.net/#/payment-success?session_id={CHECKOUT_SESSION_ID}",
+                CancelUrl = "https://ecomapp-cphjc3bwczfra6fu.southeastasia-01.azurewebsites.net/#/payment-cancel"
             };
 
             var service = new SessionService();
@@ -67,7 +71,7 @@ namespace EComAPI.Controllers
 
             var order = new Order
             {
-                UserId = "Tina", // from JWT if applicable
+                UserId = userId, // from JWT if applicable
                 StripeSessionId = session.Id,
                 TotalAmount = totalAmount,
                 PaymentStatus = "Pending",

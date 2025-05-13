@@ -35,7 +35,8 @@ builder.Services.AddCors(options =>
 });
 builder.Services.Configure<StripeSettings>(builder.Configuration.GetSection("Stripe"));
 
-StripeConfiguration.ApiKey = builder.Configuration["Stripe:SecretKey"];
+//StripeConfiguration.ApiKey = builder.Configuration["StripeSecretKey"];
+StripeConfiguration.ApiKey=Environment.GetEnvironmentVariable("StripeSecretKey");
 
 builder.Services.AddIdentity<User, IdentityRole>()
        .AddEntityFrameworkStores<AppDbContext>()
