@@ -27,7 +27,7 @@ builder.Services.AddCors(options =>
         policy =>
         {
             //policy.WithOrigins("http://localhost:4200")
-            policy.WithOrigins("http://localhost:4200", "http://ecomapp-cphjc3bwczfra6fu.southeastasia-01.azurewebsites.net")// Allow Angular frontend
+            policy.WithOrigins("http://localhost:4200", "https://ecomapp-cphjc3bwczfra6fu.southeastasia-01.azurewebsites.net")// Allow Angular frontend
                   .AllowAnyMethod()
                   .AllowAnyHeader()
             .AllowCredentials();
