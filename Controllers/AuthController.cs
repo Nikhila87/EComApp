@@ -169,7 +169,7 @@ public class AuthController : ControllerBase
         if (user == null) return Ok(); // Don't reveal user existence
         var frontendUrl = _config["FrontendBaseUrl"];
         var token = await _userManager.GeneratePasswordResetTokenAsync(user);
-        var resetLink = $"{frontendUrl}/reset-password?token={Uri.EscapeDataString(token)}&email={Uri.EscapeDataString(user.Email)}";
+        var resetLink = $"{frontendUrl}/#/reset-password?token={Uri.EscapeDataString(token)}&email={Uri.EscapeDataString(user.Email)}";
         //var resetLink = Url.Action("ResetPassword",
         //    new { token, email = user.Email },
         //    protocol: HttpContext.Request.Scheme);
