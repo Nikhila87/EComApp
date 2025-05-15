@@ -106,6 +106,24 @@ namespace EComAPI.Controllers
 
             return Ok(defaultAddress);
         }
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> DeleteAddress(int id)
+        {
+            var username = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Name)?.Value;
+            var user = await _userManager.FindByNameAsync(username);
+            if (user == null) return Unauthorized();
+
+            var address = await _context.Addresses.FirstOrDefaultAsync(a => a.Id == id && a.UserId == user.Id);
+            if (address == null) return NotFound();
+
+            _context.Addresses.Remove(address);
+            await _context.SaveChangesAsync();
+
+            return Ok(new { message = "Address deleted successfully." });
+        }
+
     }
+
 
 }
