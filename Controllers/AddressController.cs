@@ -40,7 +40,12 @@ namespace EComAPI.Controllers
                 UserId= user.Id
 
             };
+            var hasAddresses = await _context.Addresses.AnyAsync(a => a.UserId == user.Id);
 
+            if (!hasAddresses)
+            {
+                address.IsDefault = true; 
+            }
             _context.Addresses.Add(address);
             await _context.SaveChangesAsync();
 
