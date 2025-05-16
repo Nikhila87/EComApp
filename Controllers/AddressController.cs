@@ -29,7 +29,7 @@ namespace EComAPI.Controllers
             var username = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Name)?.Value;
             var user = await _userManager.FindByNameAsync(username);
             if (username== null) return Unauthorized();
-           
+
             var address = new Address
             {
                 FullName = dto.FullName,
@@ -37,10 +37,10 @@ namespace EComAPI.Controllers
                 City = dto.City,
                 ZipCode = dto.ZipCode,
                 Country = dto.Country,
-                UserId= user.Id
+                UserId = user.Id
 
             };
-            ] hasAddresses = await _context.Addresses.AnyAsync(a => a.UserId == user.Id);
+            var hasAddresses = await _context.Addresses.AnyAsync(a => a.UserId == user.Id);
 
             if (!hasAddresses)
             {
