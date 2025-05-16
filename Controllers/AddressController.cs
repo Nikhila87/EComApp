@@ -40,7 +40,7 @@ namespace EComAPI.Controllers
                 UserId= user.Id
 
             };
-            var hasAddresses = await _context.Addresses.AnyAsync(a => a.UserId == user.Id);
+            ] hasAddresses = await _context.Addresses.AnyAsync(a => a.UserId == user.Id);
 
             if (!hasAddresses)
             {
@@ -121,6 +121,27 @@ namespace EComAPI.Controllers
             await _context.SaveChangesAsync();
 
             return Ok(new { message = "Address deleted successfully." });
+        }
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+        [HttpPut("{id}")]
+        public async Task<IActionResult> UpdateAddress(int id, Address updatedAddress)
+        {
+            var username = User.FindFirst(ClaimTypes.Name)?.Value;
+            var user = await _userManager.FindByNameAsync(username);
+            if (user == null) return Unauthorized();
+
+            var address = await _context.Addresses.FirstOrDefaultAsync(a => a.Id == id && a.UserId == user.Id);
+            if (address == null) return NotFound();
+
+            // Update fields
+            address.FullName = updatedAddress.FullName;
+            address.Street = updatedAddress.Street;
+            address.City = updatedAddress.City;
+            address.ZipCode = updatedAddress.ZipCode;
+            address.Country = updatedAddress.Country;
+
+            await _context.SaveChangesAsync();
+            return Ok(address);
         }
 
     }
