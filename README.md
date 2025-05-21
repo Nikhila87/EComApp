@@ -22,7 +22,7 @@ This is the backend API for the EcomApp — an e-commerce application developed 
 - ➕ Add to Cart
 - 🧾 Place Order
 - 🧑‍💼 Admin product management (CRUD)
-- 📬 Email notifications (Planned with Azure Functions)
+
 
 
 
